@@ -3,18 +3,23 @@
 // September 26, 2019
 
 const request = require('request');
-const args = process.argv.slice(2);
 
-request(`https://api.thecatapi.com/v1/breeds/search?q=${args}`, (error, response, body) => {
-  if (body) {
-    const data = JSON.parse(body);
-    if (data.length > 0) {
-      console.log(data[0].description);
+
+
+const fetchBreedDescription = function(breedName, callback) {
+  request(`https://api.thecatapi.com/v1/breeds/search?q=${breedName}`, (error, response, body) => {
+    if (body) {
+      const data = JSON.parse(body);
+      if (data.length > 0) {
+        callback(null, data[0].description);
+      } else {
+        callback('Invalid Breed Name!', null);
+      }
     } else {
-      console.error('Invalid Breed Name!');
+      callback(error);
     }
-  } else {
-    console.error(error);
-  }
   
-});
+  });
+};
+
+module.exports = { fetchBreedDescription };
